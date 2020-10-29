@@ -26,6 +26,8 @@ export function serverErrorHandler(
 ) {
   logger.error(err);
 
+  if (res.writableEnded) return;
+
   return res.status(500).json({
     error: { message: 'Internal server error' },
   });

@@ -14,9 +14,6 @@ class Movie {
     if (!movie.duration) {
       throw new ModelError('Duration is Required');
     }
-    if (!movie.hls_file) {
-      throw new ModelError('Hls file is Required');
-    }
 
     try {
       await db(tableName).insert(movie);

@@ -1,4 +1,7 @@
 node_modules
 .env
 build
-data
+.log/*
+.log/!.gitkeep
+data/*
+data/!.gitkeep

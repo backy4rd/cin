@@ -1,11 +1,15 @@
+import knex from '../providers/database';
 import * as movies from './movies';
+import * as schedules from './schedules';
 
-async function main() {
+(async () => {
   if (process.argv[2] === 'up') {
     await movies.up();
+    await schedules.up();
   } else if (process.argv[2] === 'down') {
+    await schedules.down();
     await movies.down();
   }
-}
 
-main();
+  await knex.destroy();
+})();

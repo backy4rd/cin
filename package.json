@@ -23,7 +23,9 @@
   },
   "scripts": {
     "start": "node ./build/index.js",
-    "build": "tsc"
+    "build": "tsc",
+    "migrate:up": "node ./build/migrations up",
+    "migrate:down": "node ./build/migrations down"
   },
   "author": "",
   "license": "ISC"

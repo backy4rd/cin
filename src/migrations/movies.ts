@@ -1,6 +1,9 @@
 import knex from '../providers/database';
 
-export function up() {
+export async function up() {
+  if (await knex.schema.hasTable('movies')) {
+    return;
+  }
   return knex.schema.createTable('movies', function (table) {
     table.string('name').notNullable().primary();
     table.integer('duration').notNullable();
@@ -9,6 +12,6 @@ export function up() {
   });
 }
 
-export function down() {
-  return knex.schema.dropTable('movies');
+export async function down() {
+  return knex.schema.dropTableIfExists('movies');
 }

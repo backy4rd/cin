@@ -12,4 +12,5 @@ export default {
   DB_NAME: process.env.DB_NAME || 'test',
   DB_MIN_POOL_SIZE: parseInt(process.env.DB_MIN_POOL_SIZE) || 0,
   DB_MAX_POOL_SIZE: parseInt(process.env.DB_MAX_POOL_SIZE) || 10,
+  NODE_ENV: process.env.NODE_ENV || 'development',
 };

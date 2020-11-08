@@ -24,8 +24,10 @@
   "scripts": {
     "start": "node ./build/index.js",
     "build": "tsc",
-    "migrate:up": "node ./build/migrations up",
-    "migrate:down": "node ./build/migrations down"
+    "migrate:up": "knex migrate:latest --knexfile build/config/knexfile.js",
+    "migrate:down": "knex migrate:rollback --knexfile build/config/knexfile.js",
+    "seed:run": "knex seed:run --knexfile build/config/knexfile.js",
+    "db:reset": "npm run migrate:down && npm run migrate:up && npm run seed:run"
   },
   "author": "",
   "license": "ISC"

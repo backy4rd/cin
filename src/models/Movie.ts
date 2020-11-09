@@ -2,26 +2,16 @@ import * as _ from 'lodash';
 import knex from '../providers/database';
 import ModelError from '../utils/model_error';
 
+import { IMovie, IQueryMovie, Range } from '../interfaces/movie';
+
 const vietnameseRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
 const pathRegex = /^[\w\/\.]+$/;
-
-export interface IMovie {
-  movie_id?: number;
-  hls_path?: string;
-  duration?: number;
-  title?: string;
-  poster_path?: string;
-  description?: string;
-  uploaded_by?: number;
-  created_at?: Date;
-  updated_at?: Date;
-}
 
 export const tableName = 'movies';
 export const knexMovie = knex<IMovie>(tableName);
 
 class Movie {
-  public validateMovie(movie: IMovie) {
+  public validateMovie(movie: IMovie): void {
     if (movie.title && !vietnameseRegex.test(movie.title)) {
       throw new ModelError('invalid title');
     }
@@ -36,11 +26,11 @@ class Movie {
     }
   }
 
-  public async create(movie: IMovie) {
+  public async create(movie: IMovie): Promise<void> {
     this.validateMovie(movie);
 
     try {
-      return await knexMovie.insert(movie);
+      await knexMovie.insert(movie);
     } catch (err) {
       if (err.code === 'ER_DUP_ENTRY') {
         throw new ModelError('hls_path conflict');
@@ -56,7 +46,7 @@ class Movie {
     }
   }
 
-  public async update(movie_id: number, movie: IMovie) {
+  public async update(movie_id: number, movie: IMovie): Promise<number> {
     this.validateMovie(movie);
 
     try {
@@ -68,9 +58,58 @@ class Movie {
     }
   }
 
-  public async delete(movie_id: number) {
+  public async delete(movie_id: number): Promise<number> {
     try {
       return await knexMovie.where('movie_id', movie_id).del();
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getMovies(
+    range: Range = { offset: 0, limit: 30 },
+  ): Promise<IQueryMovie[]> {
+    try {
+      return await knexMovie
+        .select(
+          'movie_id',
+          'hls_path',
+          'duration',
+          'title',
+          'poster_path',
+          'description',
+          'username as uploaded_by',
+          'created_at',
+          'updated_at',
+        )
+        .join('users', 'users.user_id', 'movies.uploaded_by')
+        .orderBy('created_at')
+        .offset(range.offset)
+        .limit(range.limit);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getMovieById(movie_id: number): Promise<IQueryMovie> {
+    try {
+      const [movie] = await knexMovie
+        .select(
+          'movie_id',
+          'hls_path',
+          'duration',
+          'title',
+          'poster_path',
+          'description',
+          'username as uploaded_by',
+          'created_at',
+          'updated_at',
+        )
+        .join('users', 'users.user_id', 'movies.uploaded_by')
+        .where('movie_id', movie_id);
+
+      return movie;
+      //
     } catch (err) {
       throw err;
     }

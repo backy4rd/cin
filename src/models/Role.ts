@@ -1,5 +1,5 @@
 class Role {
-  public admin = 1;
+  public readonly ADMIN = 1;
 }
 
 export default new Role();

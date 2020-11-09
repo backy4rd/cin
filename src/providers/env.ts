@@ -12,5 +12,7 @@ export default {
   DB_NAME: process.env.DB_NAME || 'test',
   DB_MIN_POOL_SIZE: parseInt(process.env.DB_MIN_POOL_SIZE) || 0,
   DB_MAX_POOL_SIZE: parseInt(process.env.DB_MAX_POOL_SIZE) || 10,
+  SALT_ROUND: parseInt(process.env.SALT_ROUND) || 10,
+  JWT_SECRET_KEY: process.env.SALT_ROUND || 'secret',
   NODE_ENV: process.env.NODE_ENV || 'development',
 };

@@ -93,7 +93,7 @@ class Movie {
 
   public async getMovieById(movie_id: number): Promise<IQueryMovie> {
     try {
-      const [movie] = await knexMovie
+      const movies = await knexMovie
         .select(
           'movie_id',
           'hls_path',
@@ -108,7 +108,7 @@ class Movie {
         .join('users', 'users.user_id', 'movies.uploaded_by')
         .where('movie_id', movie_id);
 
-      return movie;
+      return movies.length === 0 ? null : movies[0];
       //
     } catch (err) {
       throw err;

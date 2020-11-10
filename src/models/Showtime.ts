@@ -41,14 +41,13 @@ class Showtime {
 
   public async getShowtimesByMovieId(
     movie_id: number,
-  ): Promise<IQueryShowtime> {
+  ): Promise<IQueryShowtime[]> {
     try {
-      const showtimes = await knexShowtime
-        .select('showtime_id', 'start_time', 'movie_id')
+      return await knexShowtime
+        .select('showtime_id', 'start_time', 'movies.movie_id')
         .join('movies', 'movies.movie_id', 'showtimes.movie_id')
-        .where('movie_id', movie_id);
+        .where('movies.movie_id', movie_id);
 
-      return showtimes.length === 0 ? null : showtimes[0];
       //
     } catch (err) {
       throw err;

@@ -24,6 +24,12 @@ const config = {
     pool: {
       min: env.DB_MIN_POOL_SIZE,
       max: env.DB_MAX_POOL_SIZE,
+      // sync time_zone
+      afterCreate: (connection, callback) => {
+        connection.query('SET time_zone = "+7:00";', function (err) {
+          callback(err, connection);
+        });
+      },
     },
   },
 } as knex.Config;

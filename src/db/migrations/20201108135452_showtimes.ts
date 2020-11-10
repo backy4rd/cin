@@ -7,6 +7,7 @@ export function up(knex: knex<any>) {
     table.integer('movie_id').unsigned().notNullable();
 
     table.foreign('movie_id').references('movie_id').inTable('movies');
+    table.index('start_time');
   });
 }
 

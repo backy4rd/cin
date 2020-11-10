@@ -3,7 +3,7 @@ import * as knex from 'knex';
 export function up(knex: knex<any>) {
   return knex.schema.createTable('showtimes', (table: knex.TableBuilder) => {
     table.increments('showtime_id');
-    table.timestamp('start_time', { useTz: true }).notNullable();
+    table.dateTime('start_time', { useTz: true }).notNullable();
     table.integer('movie_id').unsigned().notNullable();
 
     table.foreign('movie_id').references('movie_id').inTable('movies');

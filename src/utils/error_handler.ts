@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AssertionError } from 'chai';
+import ModelError from './model_error';
 import logger from '../providers/logger';
 
 export function clientErrorHandler(
@@ -12,6 +13,12 @@ export function clientErrorHandler(
     const [status, message] = err.message.split(':');
     return res.status(parseInt(status)).json({
       error: { message: message },
+    });
+  }
+
+  if (err instanceof ModelError) {
+    return res.status(400).json({
+      error: { message: err.message },
     });
   }
 

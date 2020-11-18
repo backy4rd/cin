@@ -2,7 +2,13 @@ import * as _ from 'lodash';
 import knex from '../providers/database';
 import ModelError from '../utils/model_error';
 
-import { IMovie, IQueryMovie, Range } from '../interfaces/movie';
+import {
+  IMovie,
+  IQueryUpcommingMovie,
+  IQueryMovieDetail,
+  IQueryShowingMovie,
+  Range,
+} from '../interfaces/movie';
 
 const vietnameseRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
 const pathRegex = /^[\w\/\.]+$/;
@@ -68,7 +74,7 @@ class Movie {
 
   public async getMovies(
     range: Range = { offset: 0, limit: 30 },
-  ): Promise<IQueryMovie[]> {
+  ): Promise<IQueryMovieDetail[]> {
     try {
       return await knexMovie
         .select(
@@ -83,7 +89,7 @@ class Movie {
           'updated_at',
         )
         .join('users', 'users.user_id', 'movies.uploaded_by')
-        .orderBy('created_at')
+        .orderBy('created_at', 'desc')
         .offset(range.offset)
         .limit(range.limit);
     } catch (err) {
@@ -91,7 +97,7 @@ class Movie {
     }
   }
 
-  public async getMovieById(movie_id: number): Promise<IQueryMovie> {
+  public async getMovieById(movie_id: number): Promise<IQueryMovieDetail> {
     try {
       const movies = await knexMovie
         .select(
@@ -109,6 +115,68 @@ class Movie {
         .where('movie_id', movie_id);
 
       return movies.length === 0 ? null : movies[0];
+      //
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getShowingMovies(
+    range: Range = { offset: 0, limit: 30 },
+  ): Promise<IQueryShowingMovie[]> {
+    try {
+      return await knexMovie
+        .select(
+          'movies.movie_id',
+          'title',
+          'duration',
+          'hls_path',
+          'poster_path',
+        )
+        .join('showtimes', 'showtimes.movie_id', 'movies.movie_id')
+        .where(
+          knex.raw('DATE_ADD(start_time, INTERVAL duration SECOND)'),
+          '>',
+          knex.fn.now(),
+        )
+        .andWhere('start_time', '<=', knex.fn.now())
+        .groupBy('movies.movie_id')
+        .orderBy('created_at', 'desc')
+        .offset(range.offset)
+        .limit(range.limit);
+
+      //
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getUpcommingMovies(
+    dayOffset: number = 7,
+    range: Range = { offset: 0, limit: 30 },
+  ): Promise<IQueryUpcommingMovie[]> {
+    try {
+      return await knexMovie
+        .select(
+          'movies.movie_id',
+          'title',
+          'duration',
+          'hls_path',
+          'poster_path',
+          knex.raw('MIN(start_time) AS earliest_start_time'),
+        )
+        .join('showtimes', 'showtimes.movie_id', 'movies.movie_id')
+        .where(
+          knex.raw('DATE_ADD(start_time, INTERVAL ? DAY)', [dayOffset]),
+          '>',
+          knex.fn.now(),
+        )
+        .andWhere('start_time', '>', knex.fn.now())
+        .groupBy('movies.movie_id')
+        .orderBy('created_at', 'desc')
+        .offset(range.offset)
+        .limit(range.limit);
+
       //
     } catch (err) {
       throw err;

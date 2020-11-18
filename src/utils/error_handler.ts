@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AssertionError } from 'chai';
+import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 import ModelError from './model_error';
 import logger from '../providers/logger';
 
@@ -19,6 +20,18 @@ export function clientErrorHandler(
   if (err instanceof ModelError) {
     return res.status(400).json({
       error: { message: err.message },
+    });
+  }
+
+  if (err instanceof TokenExpiredError) {
+    return res.status(401).json({
+      error: { message: 'Token expired' },
+    });
+  }
+
+  if (err instanceof JsonWebTokenError) {
+    return res.status(401).json({
+      error: { message: 'Invalid token' },
     });
   }
 

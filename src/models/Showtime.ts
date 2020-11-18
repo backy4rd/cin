@@ -5,12 +5,11 @@ import knex from '../providers/database';
 import { IShowtime, IQueryShowtime } from '../interfaces/showtime';
 
 export const tableName = 'showtimes';
-export const knexShowtime = knex<IShowtime>(tableName);
 
 class Showtime {
   public async create(showtime: IShowtime): Promise<void> {
     try {
-      await knexShowtime.insert(showtime);
+      await knex('showtimes').insert(showtime);
     } catch (err) {
       throw err;
     }
@@ -22,7 +21,7 @@ class Showtime {
   ): Promise<number> {
     try {
       const filteredMovie = _.pickBy(showtime, _.identity); // remove all falsy property
-      return await knexShowtime
+      return await knex('showtimes')
         .update(filteredMovie)
         .where('showtime_id', showtime_id);
       //
@@ -33,7 +32,7 @@ class Showtime {
 
   public async delete(showtime_id: number): Promise<number> {
     try {
-      return await knexShowtime.where('showtime_id', showtime_id).del();
+      return await knex('showtimes').where('showtime_id', showtime_id).del();
     } catch (err) {
       throw err;
     }
@@ -43,7 +42,7 @@ class Showtime {
     movie_id: number,
   ): Promise<IQueryShowtime[]> {
     try {
-      return await knexShowtime
+      return await knex('showtimes')
         .select('showtime_id', 'start_time', 'movies.movie_id')
         .join('movies', 'movies.movie_id', 'showtimes.movie_id')
         .where('movies.movie_id', movie_id);

@@ -5,10 +5,9 @@ import * as jwt from 'jsonwebtoken';
 import knex from '../providers/database';
 import env from '../providers/env';
 
-import { IUser, IQueryUser, UserToken } from '../interfaces/user';
+import { IQueryUser, UserToken } from '../interfaces/user';
 
 export const tableName = 'users';
-export const knexUser = knex<IUser>(tableName);
 
 class User {
   public hashPassword(password: string): Promise<string> {
@@ -48,7 +47,7 @@ class User {
 
   public async getUserByUsername(username: string): Promise<IQueryUser> {
     try {
-      const users = await knexUser
+      const users = await knex('users')
         .select('user_id', 'username', 'password', 'role')
         .join('roles', 'roles.role_id', 'users.role_id')
         .where('username', username);

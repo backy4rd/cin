@@ -14,7 +14,6 @@ const vietnameseRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâ�
 const pathRegex = /^[\w\/\.]+$/;
 
 export const tableName = 'movies';
-export const knexMovie = knex<IMovie>(tableName);
 
 class Movie {
   public validateMovie(movie: IMovie): void {
@@ -36,7 +35,7 @@ class Movie {
     this.validateMovie(movie);
 
     try {
-      await knexMovie.insert(movie);
+      await knex('movies').insert(movie);
     } catch (err) {
       if (err.code === 'ER_DUP_ENTRY') {
         throw new ModelError('hls_path conflict');
@@ -58,7 +57,9 @@ class Movie {
     try {
       movie.updated_at = new Date();
       const filteredMovie = _.pickBy(movie, _.identity); // remove all falsy property
-      return await knexMovie.update(filteredMovie).where('movie_id', movie_id);
+      return await knex('movies')
+        .update(filteredMovie)
+        .where('movie_id', movie_id);
     } catch (err) {
       throw err;
     }
@@ -66,7 +67,7 @@ class Movie {
 
   public async delete(movie_id: number): Promise<number> {
     try {
-      return await knexMovie.where('movie_id', movie_id).del();
+      return await knex('movies').where('movie_id', movie_id).del();
     } catch (err) {
       throw err;
     }
@@ -76,7 +77,7 @@ class Movie {
     range: Range = { offset: 0, limit: 30 },
   ): Promise<IQueryMovieDetail[]> {
     try {
-      return await knexMovie
+      return await knex('movies')
         .select(
           'movie_id',
           'hls_path',
@@ -99,7 +100,7 @@ class Movie {
 
   public async getMovieById(movie_id: number): Promise<IQueryMovieDetail> {
     try {
-      const movies = await knexMovie
+      const movies = await knex('movies')
         .select(
           'movie_id',
           'hls_path',
@@ -125,7 +126,7 @@ class Movie {
     range: Range = { offset: 0, limit: 30 },
   ): Promise<IQueryShowingMovie[]> {
     try {
-      return await knexMovie
+      return await knex('movies')
         .select(
           'movies.movie_id',
           'title',
@@ -156,7 +157,7 @@ class Movie {
     range: Range = { offset: 0, limit: 30 },
   ): Promise<IQueryUpcommingMovie[]> {
     try {
-      return await knexMovie
+      return await knex('movies')
         .select(
           'movies.movie_id',
           'title',

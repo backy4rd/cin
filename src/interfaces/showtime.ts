@@ -5,7 +5,7 @@ export interface IShowtime {
 }
 
 export interface IQueryShowtime {
-  showtime_id?: number;
-  start_time?: Date;
-  movie_id?: number;
+  showtime_id: number;
+  start_time: Date;
+  movie_id: number;
 }

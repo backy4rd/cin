@@ -38,8 +38,3 @@ export interface IQueryUpcommingMovie {
   poster_path: string;
   earliest_start_time: Date;
 }
-
-export interface Range {
-  offset: number;
-  limit: number;
-}

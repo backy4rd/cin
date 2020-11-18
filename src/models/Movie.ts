@@ -7,8 +7,8 @@ import {
   IQueryUpcommingMovie,
   IQueryMovieDetail,
   IQueryShowingMovie,
-  Range,
 } from '../interfaces/movie';
+import { Range } from '../interfaces/general';
 
 const vietnameseRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
 const pathRegex = /^[\w\/\.]+$/;

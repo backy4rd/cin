@@ -6,10 +6,10 @@ export interface IUser {
 }
 
 export interface IQueryUser {
-  user_id?: number;
-  username?: string;
-  password?: string;
-  role?: string;
+  user_id: number;
+  username: string;
+  password: string;
+  role: string;
 }
 
 export interface UserToken {

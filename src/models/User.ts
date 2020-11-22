@@ -60,7 +60,7 @@ class User {
 
   public async getUserByUsername(username: string): Promise<IQueryUser> {
     try {
-      const users = await knex('users')
+      const users = await knex(tableName)
         .select('user_id', 'username', 'password', 'role')
         .join('roles', 'roles.role_id', 'users.role_id')
         .where('username', username);
@@ -81,7 +81,7 @@ class User {
 
     try {
       const filteredUser = _.pickBy(user, _.identity); // remove all falsy property
-      return await knex('users')
+      return await knex(tableName)
         .update(filteredUser)
         .where('username', username);
     } catch (err) {

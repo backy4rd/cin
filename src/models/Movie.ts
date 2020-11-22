@@ -41,7 +41,7 @@ class Movie {
         throw new ModelError('hls_path conflict');
       }
       if (err.code === 'ER_NO_REFERENCED_ROW_2') {
-        throw new ModelError('uploaded_by not exist');
+        throw new ModelError("role_id doesn't exist");
       }
       // if (err.code === 'ER_NO_DEFAULT_FOR_FIELD') {
       //   throw new ModelError('missing required field');

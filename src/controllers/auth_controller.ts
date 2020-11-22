@@ -2,18 +2,20 @@ import { expect } from 'chai';
 import { Request, Response, NextFunction } from 'express';
 
 import User from '../models/User';
-import asyncHander from '../utils/async_handler';
+import asyncHander from '../decorators/async_handler';
+import { isString, mustExist } from '../decorators/validate_decorators';
 
 const jwtRegex = /^[A-Za-z]+ [A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/;
 
 class AuthController {
   @asyncHander
+  @mustExist(['body.username', 'body.password'])
+  @isString(['body.username', 'body.password'])
   public async login(req: Request, res: Response) {
     const { username, password } = req.body;
-    expect(username && password, '400:Missing parameters').to.exist;
 
     const user = await User.getUserByUsername(username);
-    expect(user, '404:username not found').to.exist;
+    expect(user, '404:Username not found').to.exist;
 
     const isMatch = await User.comparePassword(password, user.password);
     expect(isMatch, "400:Password don't match").to.be.true;
@@ -41,9 +43,10 @@ class AuthController {
   }
 
   @asyncHander
+  @mustExist(['body.old_password', 'body.new_password'])
+  @isString(['body.old_password', 'body.new_password'])
   public async changePassword(req: Request, res: Response) {
     const { old_password, new_password } = req.body;
-    expect(old_password && new_password, '400:Missing parameters').to.exist;
 
     const username = req.local.auth.username;
     const user = await User.getUserByUsername(username);

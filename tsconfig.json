@@ -1,14 +1,14 @@
 {
-  "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "outDir": "build/",
-    "sourceMap": true,
-    "noUnusedLocals": true,
-    "resolveJsonModule": true,
-    "experimentalDecorators": true,
-    "typeRoots": ["./src/types", "./node_modules/@types"]
-  },
-  "include": ["./src/**/*.ts"],
-  "exclude": ["node_modules"]
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "outDir": "build/",
+        "sourceMap": true,
+        "noUnusedLocals": true,
+        "resolveJsonModule": true,
+        "experimentalDecorators": true,
+        "typeRoots": ["./src/types", "./node_modules/@types"]
+    },
+    "include": ["./src/**/*.ts"],
+    "exclude": ["node_modules"]
 }

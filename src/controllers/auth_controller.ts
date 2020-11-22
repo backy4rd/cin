@@ -54,8 +54,7 @@ class AuthController {
     const isMatch = await User.comparePassword(old_password, user.password);
     expect(isMatch, "400:Password don't match").to.be.true;
 
-    const hash = await User.hashPassword(new_password);
-    await User.update(username, { password: hash });
+    await User.update(username, { password: new_password });
 
     return res.status(200).json({
       data: { message: 'Change password success' },

@@ -5,12 +5,25 @@ import * as jwt from 'jsonwebtoken';
 import knex from '../providers/database';
 import env from '../providers/env';
 
-import { IQueryUser, UserToken } from '../interfaces/user';
+import ModelError from '../utils/model_error';
+import { IQueryUser, IUser, UserToken } from '../interfaces/user';
 
 export const tableName = 'users';
 
+const usernameRegex = /^(?=.{5,32})[0-9a-zA-Z_]+$/;
+const passwordRegex = /^(?=.{5,32})[0-9A-Za-z@$!%*#?&]+$/;
+
 class User {
-  public hashPassword(password: string): Promise<string> {
+  public validateUser(user: IUser): void {
+    if (user.username && !usernameRegex.test(user.username)) {
+      throw new ModelError('Invalid username');
+    }
+    if (user.password && !passwordRegex.test(user.password)) {
+      throw new ModelError('Invalid password');
+    }
+  }
+
+  private hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, env.SALT_ROUND);
   }
 
@@ -47,7 +60,7 @@ class User {
 
   public async getUserByUsername(username: string): Promise<IQueryUser> {
     try {
-      const users = await knex('users')
+      const users = await knex(tableName)
         .select('user_id', 'username', 'password', 'role')
         .join('roles', 'roles.role_id', 'users.role_id')
         .where('username', username);
@@ -55,6 +68,27 @@ class User {
       return users.length === 0 ? null : users[0];
       //
     } catch (err) {
+      throw err;
+    }
+  }
+
+  public async update(username: string, user: IUser): Promise<number> {
+    this.validateUser(user);
+
+    if (user.password) {
+      user.password = await this.hashPassword(user.password);
+    }
+
+    try {
+      const filteredUser = _.pickBy(user, _.identity); // remove all falsy property
+      return await knex(tableName)
+        .update(filteredUser)
+        .where('username', username);
+    } catch (err) {
+      if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+        throw new ModelError("role_id doesn't exist");
+      }
+
       throw err;
     }
   }

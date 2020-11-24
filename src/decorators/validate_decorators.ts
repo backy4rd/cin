@@ -2,16 +2,12 @@ import * as _ from 'lodash';
 import { expect } from 'chai';
 import { Request, Response, NextFunction } from 'express';
 
-export function mustExist(requestKeyPathss: string[] | string) {
+export function mustExist(...requestKeyPaths: string[]) {
     return function (target: Object, propertyKey: string, descriptor: PropertyDescriptor) {
         const method = descriptor.value;
 
         descriptor.value = function (req: Request, res: Response, next: NextFunction) {
-            if (!Array.isArray(requestKeyPathss)) {
-                requestKeyPathss = [requestKeyPathss];
-            }
-
-            const isAllExist = requestKeyPathss.every((keyPath) => {
+            const isAllExist = requestKeyPaths.every((keyPath) => {
                 return _.get(req, keyPath) !== undefined;
             });
 
@@ -22,15 +18,11 @@ export function mustExist(requestKeyPathss: string[] | string) {
     };
 }
 
-export function mustExistOne(requestKeyPaths: string[] | string) {
+export function mustExistOne(...requestKeyPaths: string[]) {
     return function (target: Object, propertyKey: string, descriptor: PropertyDescriptor) {
         const method = descriptor.value;
 
         descriptor.value = function (req: Request, res: Response, next: NextFunction) {
-            if (!Array.isArray(requestKeyPaths)) {
-                requestKeyPaths = [requestKeyPaths];
-            }
-
             const isExistOne = requestKeyPaths.some((keyPath) => {
                 return _.get(req, keyPath) !== undefined;
             });
@@ -42,15 +34,11 @@ export function mustExistOne(requestKeyPaths: string[] | string) {
     };
 }
 
-export function isString(requestKeyPaths: string[] | string) {
+export function isString(...requestKeyPaths: string[]) {
     return function (target: Object, propertyKey: string, descriptor: PropertyDescriptor) {
         const method = descriptor.value;
 
         descriptor.value = function (req: Request, res: Response, next: NextFunction) {
-            if (!Array.isArray(requestKeyPaths)) {
-                requestKeyPaths = [requestKeyPaths];
-            }
-
             const isAllString = requestKeyPaths.every((keyPath) => {
                 return typeof _.get(req, keyPath) === 'string';
             });
@@ -62,15 +50,11 @@ export function isString(requestKeyPaths: string[] | string) {
     };
 }
 
-export function isNumber(requestKeyPaths: string[] | string) {
+export function isNumber(...requestKeyPaths: string[]) {
     return function (target: Object, propertyKey: string, descriptor: PropertyDescriptor) {
         const method = descriptor.value;
 
         descriptor.value = function (req: Request, res: Response, next: NextFunction) {
-            if (!Array.isArray(requestKeyPaths)) {
-                requestKeyPaths = [requestKeyPaths];
-            }
-
             const isAllNumber = requestKeyPaths.every((keyPath) => {
                 return typeof _.get(req, keyPath) === 'number';
             });
@@ -82,15 +66,11 @@ export function isNumber(requestKeyPaths: string[] | string) {
     };
 }
 
-export function parseDate(requestKeyPaths: string[] | string) {
+export function parseDate(...requestKeyPaths: string[]) {
     return function (target: Object, propertyKey: string, descriptor: PropertyDescriptor) {
         const method = descriptor.value;
 
         descriptor.value = function (req: Request, res: Response, next: NextFunction) {
-            if (!Array.isArray(requestKeyPaths)) {
-                requestKeyPaths = [requestKeyPaths];
-            }
-
             requestKeyPaths.forEach((keyPath) => {
                 const value = _.get(req, keyPath);
                 _.set(req, keyPath, new Date(value));
@@ -101,15 +81,11 @@ export function parseDate(requestKeyPaths: string[] | string) {
     };
 }
 
-export function isDateFormat(requestKeyPaths: string[] | string) {
+export function isDateFormat(...requestKeyPaths: string[]) {
     return function (target: Object, propertyKey: string, descriptor: PropertyDescriptor) {
         const method = descriptor.value;
 
         descriptor.value = function (req: Request, res: Response, next: NextFunction) {
-            if (!Array.isArray(requestKeyPaths)) {
-                requestKeyPaths = [requestKeyPaths];
-            }
-
             const isAllDate = requestKeyPaths.every((keyPath) => {
                 const value = _.get(req, keyPath);
                 return isNaN(Date.parse(value)) === false;

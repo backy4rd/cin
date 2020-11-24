@@ -9,8 +9,8 @@ const jwtRegex = /^[A-Za-z]+ [A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=
 
 class AuthController {
     @asyncHander
-    @mustExist(['body.username', 'body.password'])
-    @isString(['body.username', 'body.password'])
+    @mustExist('body.username', 'body.password')
+    @isString('body.username', 'body.password')
     public async login(req: Request, res: Response) {
         const { username, password } = req.body;
 
@@ -43,8 +43,8 @@ class AuthController {
     }
 
     @asyncHander
-    @mustExist(['body.old_password', 'body.new_password'])
-    @isString(['body.old_password', 'body.new_password'])
+    @mustExist('body.old_password', 'body.new_password')
+    @isString('body.old_password', 'body.new_password')
     public async changePassword(req: Request, res: Response) {
         const { old_password, new_password } = req.body;
 

@@ -13,6 +13,7 @@ export interface IQueryUser {
 }
 
 export interface UserToken {
+    user_id: number;
     username: string;
     role: string;
     iat?: number;

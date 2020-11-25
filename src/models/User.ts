@@ -33,6 +33,7 @@ class User {
 
     public signJWT(user: IQueryUser): Promise<string> {
         const payload: UserToken = {
+            user_id: user.user_id,
             username: user.username,
             role: user.role,
         };

@@ -30,7 +30,7 @@
     },
     "scripts": {
         "start": "node ./build/index.js",
-        "build": "tsc",
+        "build": "rm -rf ./build && tsc",
         "migrate:up": "knex migrate:latest --knexfile build/config/knexfile.js",
         "migrate:down": "knex migrate:rollback --knexfile build/config/knexfile.js",
         "seed:run": "knex seed:run --knexfile build/config/knexfile.js",

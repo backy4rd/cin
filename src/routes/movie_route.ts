@@ -20,11 +20,11 @@ router.post(
     '/',
     authController.authorize,
     identityMiddleware.isManager,
-    uploadMiddleware.storeVideoAndPoster,
+    uploadMiddleware.storeUploadFiles,
     movieController.validatePostMovieRequest,
     movieController.makeHlsFiles,
     movieController.createMovieRecord,
-    uploadMiddleware.removeTempVideoAndPoster,
+    uploadMiddleware.removeTempUploadFiles,
 );
 
 router.get(
@@ -38,7 +38,9 @@ router.patch(
     '/:movie_id(\\d+)',
     authController.authorize,
     identityMiddleware.isManager,
+    uploadMiddleware.storeUploadFiles,
     movieController.updateMovie,
+    uploadMiddleware.removeTempUploadFiles,
 );
 
 router.delete(

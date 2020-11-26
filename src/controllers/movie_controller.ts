@@ -28,7 +28,30 @@ class MovieController {
     public async getShowingMovies(req: Request, res: Response) {}
 
     @asyncHander
-    public async updateMovie(req: Request, res: Response) {}
+    public async updateMovie(req: Request, res: Response, next: NextFunction) {
+        const movie_id = parseInt(req.params.movie_id);
+        const { poster } = req.files;
+
+        const movie = await Movie.getMovieById(movie_id);
+        expect(movie, '404:Movie not found').to.not.be.null;
+
+        if (poster) {
+            const image = await jimp.read(poster.path);
+            // Replace old poster
+            await image.writeAsync(path.resolve(staticDir, movie.poster_path));
+        }
+
+        await Movie.update(movie_id, {
+            title: req.body.title,
+            description: req.body.description,
+        });
+
+        res.status(200).json({
+            data: { message: 'Update success' },
+        });
+
+        next();
+    }
 
     @asyncHander
     public async deleteMovie(req: Request, res: Response) {

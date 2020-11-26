@@ -12,7 +12,7 @@ const formOption: any = {
 
 class UploadMiddleware {
     @asyncHander
-    public async storeVideoAndPoster(req: Request, res: Response, next: NextFunction) {
+    public async storeUploadFiles(req: Request, res: Response, next: NextFunction) {
         const form = new formidable.IncomingForm(formOption);
 
         const { fields, files } = await new Promise((resolve, reject) => {
@@ -30,12 +30,15 @@ class UploadMiddleware {
     }
 
     @asyncHander
-    public async removeTempVideoAndPoster(req: Request, res: Response, next: NextFunction) {
+    public async removeTempUploadFiles(req: Request, res: Response, next: NextFunction) {
         const files = req.files;
 
+        const unlinkTasks = [];
         for (const field in files) {
-            await fs.promises.unlink(files[field].path);
+            unlinkTasks.push(fs.promises.unlink(files[field].path));
         }
+
+        await Promise.all(unlinkTasks);
 
         next();
     }

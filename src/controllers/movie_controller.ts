@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import * as fs from 'fs';
+import { promises as fsp } from 'fs';
 import * as path from 'path';
 import * as jimp from 'jimp';
 import getVideoDuration from 'get-video-duration';
@@ -31,7 +31,29 @@ class MovieController {
     public async updateMovie(req: Request, res: Response) {}
 
     @asyncHander
-    public async deleteMovie(req: Request, res: Response) {}
+    public async deleteMovie(req: Request, res: Response) {
+        const movie_id = parseInt(req.params.movie_id);
+
+        const movie = await Movie.getMovieById(movie_id);
+        expect(movie, '404:Movie not found').to.not.be.null;
+
+        await Movie.delete(movie_id);
+
+        const movieDirPath = path.resolve(
+            staticDir,
+            movie.hls_path.slice(0, movie.hls_path.indexOf('/')),
+        );
+
+        const files = await fsp.readdir(movieDirPath);
+        await Promise.all(
+            files.map((filename) => fsp.unlink(path.resolve(movieDirPath, filename))),
+        );
+        await fsp.rmdir(movieDirPath);
+
+        res.status(200).json({
+            data: { message: 'Delete success' },
+        });
+    }
 
     @asyncHander
     @mustExist('files.movie', 'files.poster', 'body.title')
@@ -52,11 +74,11 @@ class MovieController {
     public async makeHlsFiles(req: Request, res: Response, next: NextFunction) {
         const { movie, poster } = req.files;
 
-        const outDirName = crypto.randomBytes(16).toString('hex');
+        const outDirName = crypto.randomBytes(8).toString('hex');
         const outDirPath = path.resolve(staticDir, outDirName);
         const image = await jimp.read(poster.path);
 
-        await fs.promises.mkdir(outDirPath);
+        await fsp.mkdir(outDirPath);
 
         await image.writeAsync(path.resolve(outDirPath, 'poster.jpg'));
 

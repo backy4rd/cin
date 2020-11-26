@@ -158,9 +158,9 @@ class Movie {
                 )
                 .join('showtimes', 'showtimes.movie_id', 'movies.movie_id')
                 .where(
-                    knex.raw('DATE_ADD(start_time, INTERVAL ? DAY)', [dayOffset]),
-                    '>',
-                    knex.fn.now(),
+                    'start_time',
+                    '<',
+                    knex.raw('DATE_ADD(?, INTERVAL ? DAY)', [knex.fn.now(), dayOffset]),
                 )
                 .andWhere('start_time', '>', knex.fn.now())
                 .groupBy('movies.movie_id')

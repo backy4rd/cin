@@ -103,11 +103,7 @@ class MovieController {
             movie.hls_path.slice(0, movie.hls_path.indexOf('/')),
         );
 
-        const files = await fsp.readdir(movieDirPath);
-        await Promise.all(
-            files.map((filename) => fsp.unlink(path.resolve(movieDirPath, filename))),
-        );
-        await fsp.rmdir(movieDirPath);
+        await fsp.rmdir(movieDirPath, { recursive: true });
 
         res.status(200).json({
             data: { message: 'Delete success' },

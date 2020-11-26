@@ -43,9 +43,9 @@ class Movie {
             if (err.code === 'ER_NO_REFERENCED_ROW_2') {
                 throw new ModelError("role_id doesn't exist");
             }
-            // if (err.code === 'ER_NO_DEFAULT_FOR_FIELD') {
-            //   throw new ModelError('missing required field');
-            // }
+            if (err.code === 'ER_NO_DEFAULT_FOR_FIELD') {
+                throw new ModelError('missing required field');
+            }
 
             throw err;
         }

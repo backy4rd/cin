@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import { promises as fsp } from 'fs';
 import * as _ from 'lodash';
 import * as formidable from 'formidable';
 import { Request, Response, NextFunction } from 'express';
@@ -31,14 +31,7 @@ class UploadMiddleware {
 
     @asyncHander
     public async removeTempUploadFiles(req: Request, res: Response, next: NextFunction) {
-        const files = req.files;
-
-        const unlinkTasks = [];
-        for (const field in files) {
-            unlinkTasks.push(fs.promises.unlink(files[field].path));
-        }
-
-        await Promise.all(unlinkTasks);
+        await Promise.all(_.values(req.files).map((file) => fsp.unlink(file.path)));
 
         next();
     }

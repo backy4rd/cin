@@ -1,10 +1,21 @@
+import * as _ from 'lodash';
+import { promises as fsp } from 'fs';
 import { Request, Response, NextFunction } from 'express';
 import { AssertionError } from 'chai';
 import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 import ModelError from './model_error';
 import logger from '../providers/logger';
 
-export function clientErrorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
+export async function clientErrorHandler(
+    err: Error,
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) {
+    if (req.files) {
+        await Promise.all(_.values(req.files).map((file) => fsp.unlink(file.path)));
+    }
+
     if (err instanceof AssertionError) {
         const [status, message] = err.message.split(':');
         return res.status(parseInt(status)).json({

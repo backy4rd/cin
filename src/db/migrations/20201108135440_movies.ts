@@ -5,8 +5,8 @@ export function up(knex: knex<any>) {
         table.increments('movie_id');
         table.string('hls_path').unique().notNullable();
         table.integer('duration').notNullable();
-        table.string('title');
-        table.string('poster_path');
+        table.string('title').notNullable();
+        table.string('poster_path').notNullable();
         table.string('description');
         table.integer('uploaded_by').unsigned().notNullable();
         table.timestamps(true, true);

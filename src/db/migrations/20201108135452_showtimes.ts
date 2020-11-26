@@ -6,7 +6,7 @@ export function up(knex: knex<any>) {
         table.dateTime('start_time', { useTz: true }).notNullable();
         table.integer('movie_id').unsigned().notNullable();
 
-        table.foreign('movie_id').references('movie_id').inTable('movies');
+        table.foreign('movie_id').references('movie_id').inTable('movies').onDelete('CASCADE');
         table.index('start_time');
     });
 }

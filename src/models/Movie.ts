@@ -43,9 +43,9 @@ class Movie {
             if (err.code === 'ER_NO_REFERENCED_ROW_2') {
                 throw new ModelError("role_id doesn't exist");
             }
-            // if (err.code === 'ER_NO_DEFAULT_FOR_FIELD') {
-            //   throw new ModelError('missing required field');
-            // }
+            if (err.code === 'ER_NO_DEFAULT_FOR_FIELD') {
+                throw new ModelError('missing required field');
+            }
 
             throw err;
         }
@@ -158,9 +158,9 @@ class Movie {
                 )
                 .join('showtimes', 'showtimes.movie_id', 'movies.movie_id')
                 .where(
-                    knex.raw('DATE_ADD(start_time, INTERVAL ? DAY)', [dayOffset]),
-                    '>',
-                    knex.fn.now(),
+                    'start_time',
+                    '<',
+                    knex.raw('DATE_ADD(?, INTERVAL ? DAY)', [knex.fn.now(), dayOffset]),
                 )
                 .andWhere('start_time', '>', knex.fn.now())
                 .groupBy('movies.movie_id')

@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import { promises as fsp } from 'fs';
 import * as path from 'path';
-import * as jimp from 'jimp';
+import * as sharp from 'sharp';
 import getVideoDuration from 'get-video-duration';
 import { expect } from 'chai';
 import { Request, Response, NextFunction } from 'express';
@@ -36,9 +36,8 @@ class MovieController {
         expect(movie, '404:Movie not found').to.not.be.null;
 
         if (poster) {
-            const image = await jimp.read(poster.path);
             // Replace old poster
-            await image.writeAsync(path.resolve(staticDir, movie.poster_path));
+            await sharp(poster.path).jpeg().toFile(path.resolve(staticDir, movie.poster_path));
         }
 
         await Movie.update(movie_id, {
@@ -99,12 +98,10 @@ class MovieController {
 
         const outDirName = crypto.randomBytes(8).toString('hex');
         const outDirPath = path.resolve(staticDir, outDirName);
-        const image = await jimp.read(poster.path);
 
         await fsp.mkdir(outDirPath);
 
-        await image.writeAsync(path.resolve(outDirPath, 'poster.jpg'));
-
+        await sharp(poster.path).jpeg().toFile(path.resolve(outDirPath, 'poster.jpg'));
         await processVideo(movie.path, outDirPath);
 
         req.local.outDir = outDirName;

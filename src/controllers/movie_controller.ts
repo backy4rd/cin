@@ -16,16 +16,53 @@ const staticDir = path.resolve(__dirname, '../../data');
 
 class MovieController {
     @asyncHander
-    public async getMovieById(req: Request, res: Response) {}
+    public async getMovieById(req: Request, res: Response) {
+        const movie_id = parseInt(req.params.movie_id);
+
+        const movie = await Movie.getMovieById(movie_id);
+        expect(movie, '404:Movie not found').to.not.be.null;
+
+        res.status(200).json({
+            data: movie,
+        });
+    }
 
     @asyncHander
-    public async getMovies(req: Request, res: Response) {}
+    public async getMovies(req: Request, res: Response) {
+        const limit = parseInt(req.query.limit as string) || 30;
+        const offset = parseInt(req.query.offset as string) || 0;
+
+        const movies = await Movie.getMovies({ offset, limit });
+
+        res.status(200).json({
+            data: movies,
+        });
+    }
 
     @asyncHander
-    public async getUpcommingMovies(req: Request, res: Response) {}
+    public async getUpcommingMovies(req: Request, res: Response) {
+        const limit = parseInt(req.query.limit as string) || 30;
+        const offset = parseInt(req.query.offset as string) || 0;
+        const day_offset = parseInt(req.query.day_offset as string) || 7;
+
+        const movies = await Movie.getUpcommingMovies(day_offset, { offset, limit });
+
+        res.status(200).json({
+            data: movies,
+        });
+    }
 
     @asyncHander
-    public async getShowingMovies(req: Request, res: Response) {}
+    public async getShowingMovies(req: Request, res: Response) {
+        const limit = parseInt(req.query.limit as string) || 30;
+        const offset = parseInt(req.query.offset as string) || 0;
+
+        const movies = await Movie.getShowingMovies({ offset, limit });
+
+        res.status(200).json({
+            data: movies,
+        });
+    }
 
     @asyncHander
     public async updateMovie(req: Request, res: Response, next: NextFunction) {

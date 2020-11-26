@@ -1,9 +1,11 @@
 declare module Express {
-    export interface Local {
+    interface Local {
         auth?: import('../../interfaces/user').UserToken;
+        outDir?: string;
     }
 
-    export interface Request {
+    interface Request {
         local: Local;
+        files: import('formidable').Files;
     }
 }

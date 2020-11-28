@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import knex from '../providers/database';
-// import ModelError from '../utils/model_error';
+import ModelError from '../utils/model_error';
 
 import { IShowtime, IQueryShowtime } from '../interfaces/showtime';
 
@@ -11,6 +11,9 @@ class Showtime {
         try {
             await knex('showtimes').insert(showtime);
         } catch (err) {
+            if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+                throw new ModelError("movie_id doesn't exist");
+            }
             throw err;
         }
     }

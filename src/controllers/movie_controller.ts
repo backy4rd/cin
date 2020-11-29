@@ -10,7 +10,7 @@ import Movie from '../models/Movie';
 
 import asyncHander from '../decorators/async_handler';
 import { mustExist } from '../decorators/validate_decorators';
-import processVideo from '../utils/process_video';
+import processVideoInOrder from '../utils/process_video';
 
 const staticDir = path.resolve(__dirname, '../../data');
 
@@ -135,7 +135,7 @@ class MovieController {
         await fsp.mkdir(outDirPath);
 
         await sharp(poster.path).jpeg().toFile(path.resolve(outDirPath, 'poster.jpg'));
-        await processVideo(movie.path, outDirPath);
+        await processVideoInOrder(movie.path, outDirPath);
 
         req.local.outDir = outDirName;
         next();

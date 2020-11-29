@@ -1,7 +1,9 @@
 import * as path from 'path';
 import * as ffmpeg from 'fluent-ffmpeg';
 
-function processVideo(videoPath, outDirPath) {
+let processChain: Promise<void> = Promise.resolve();
+
+function processVideo(videoPath, outDirPath): Promise<void> {
     return new Promise((resolve, reject) => {
         const process = ffmpeg(videoPath)
             .outputOptions([
@@ -24,4 +26,10 @@ function processVideo(videoPath, outDirPath) {
     });
 }
 
-export default processVideo;
+function processVideoInOrder(videoPath, outDirPath): Promise<void> {
+    processChain = processChain.then(() => processVideo(videoPath, outDirPath));
+
+    return processChain;
+}
+
+export default processVideoInOrder;

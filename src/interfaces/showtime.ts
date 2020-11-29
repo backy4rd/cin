@@ -9,3 +9,10 @@ export interface IQueryShowtime {
     start_time: Date;
     movie_id: number;
 }
+
+export interface IQueryShowtimeDetail {
+    showtime_id: number;
+    start_time: Date;
+    movie_id: number;
+    duration: number;
+}

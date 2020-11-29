@@ -7,7 +7,7 @@ export function up(knex: knex<any>) {
         table.integer('duration').notNullable();
         table.string('title').notNullable();
         table.string('poster_path').notNullable();
-        table.string('description');
+        table.string('description', 2048);
         table.integer('uploaded_by').unsigned().notNullable();
         table.timestamps(true, true);
 

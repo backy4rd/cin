@@ -2,14 +2,14 @@ import * as _ from 'lodash';
 import knex from '../providers/database';
 import ModelError from '../utils/model_error';
 
-import { IShowtime, IQueryShowtime } from '../interfaces/showtime';
+import { IShowtime, IQueryShowtime, IQueryShowtimeDetail } from '../interfaces/showtime';
 
 export const tableName = 'showtimes';
 
 class Showtime {
     public async create(showtime: IShowtime): Promise<void> {
         try {
-            await knex('showtimes').insert(showtime);
+            await knex(tableName).insert(showtime);
         } catch (err) {
             if (err.code === 'ER_NO_REFERENCED_ROW_2') {
                 throw new ModelError("movie_id doesn't exist");
@@ -21,7 +21,7 @@ class Showtime {
     public async update(showtime_id: number, showtime: IShowtime): Promise<number> {
         try {
             const filteredMovie = _.pickBy(showtime, _.identity); // remove all falsy property
-            return await knex('showtimes').update(filteredMovie).where('showtime_id', showtime_id);
+            return await knex(tableName).update(filteredMovie).where('showtime_id', showtime_id);
             //
         } catch (err) {
             throw err;
@@ -30,7 +30,7 @@ class Showtime {
 
     public async delete(showtime_id: number): Promise<number> {
         try {
-            return await knex('showtimes').where('showtime_id', showtime_id).del();
+            return await knex(tableName).where('showtime_id', showtime_id).del();
         } catch (err) {
             throw err;
         }
@@ -38,11 +38,25 @@ class Showtime {
 
     public async getShowtimesByMovieId(movie_id: number): Promise<IQueryShowtime[]> {
         try {
-            return await knex('showtimes')
+            return await knex(tableName)
                 .select('showtime_id', 'start_time', 'movies.movie_id')
                 .join('movies', 'movies.movie_id', 'showtimes.movie_id')
                 .where('movies.movie_id', movie_id);
 
+            //
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    public async getShowtimeById(showtime_id: number): Promise<IQueryShowtimeDetail> {
+        try {
+            const showtimes = await knex(tableName)
+                .select('showtime_id', 'start_time', 'movies.movie_id', 'duration')
+                .join('movies', 'movies.movie_id', 'showtimes.movie_id')
+                .where('showtime_id', showtime_id);
+
+            return showtimes.length === 0 ? null : showtimes[0];
             //
         } catch (err) {
             throw err;

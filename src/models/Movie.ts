@@ -20,9 +20,6 @@ class Movie {
         if (movie.title && !vietnameseRegex.test(movie.title)) {
             throw new ModelError('invalid title');
         }
-        if (movie.description && !vietnameseRegex.test(movie.description)) {
-            throw new ModelError('invalid description');
-        }
         if (movie.hls_path && !pathRegex.test(movie.hls_path)) {
             throw new ModelError('invalid hls_path');
         }

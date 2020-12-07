@@ -1,7 +1,8 @@
-import { promises as fsp } from 'fs';
-import * as path from 'path';
-import * as url from 'url';
 import * as express from 'express';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as readline from 'readline';
+import * as url from 'url';
 
 import Showtime from '../models/Showtime';
 
@@ -37,10 +38,22 @@ router.get('/*/*.m3u8', async (req: express.Request, res: express.Response) => {
     //
     const m3u8Path = path.resolve(staticDir, url.parse(req.url).pathname.slice(1));
 
-    const lines = (await fsp.readFile(m3u8Path, 'utf8')).split('\n');
-    lines.splice(3, 0, `#EXT-X-START:TIME-OFFSET=${now - start_time}`);
+    const rl = readline.createInterface({
+        input: fs.createReadStream(m3u8Path),
+        crlfDelay: Infinity,
+    });
 
-    res.status(200).send(lines.join('\n'));
+    let i = 0;
+    for await (const line of rl) {
+        if (i == 3) {
+            res.write(`#EXT-X-START:TIME-OFFSET=${now - start_time}\n`);
+        }
+
+        res.write(line + '\n');
+        i++;
+    }
+
+    res.status(200).end();
 });
 
 router.use(express.static(staticDir));

@@ -21,7 +21,7 @@ router.post(
     authController.authorize,
     identityMiddleware.isManager,
     uploadMiddleware.storeUploadFiles,
-    movieController.validatePostMovieRequest,
+    movieController.validatePostMovieRequestAndSendResponse,
     movieController.makeHlsFiles,
     movieController.createMovieRecord,
     uploadMiddleware.removeTempUploadFiles,

@@ -2,7 +2,6 @@ import * as crypto from 'crypto';
 import { promises as fsp } from 'fs';
 import * as path from 'path';
 import * as sharp from 'sharp';
-import getVideoDuration from 'get-video-duration';
 import { expect } from 'chai';
 import { Request, Response, NextFunction } from 'express';
 
@@ -11,6 +10,7 @@ import Movie from '../models/Movie';
 import asyncHander from '../decorators/async_handler';
 import { mustExist } from '../decorators/validate_decorators';
 import processVideoInOrder from '../utils/process_video';
+import getVideoDuration from '../utils/get_video_duration';
 
 const staticDir = path.resolve(__dirname, '../../data');
 
@@ -112,13 +112,17 @@ class MovieController {
 
     @asyncHander
     @mustExist('files.movie', 'files.poster', 'body.title')
-    public async validatePostMovieRequest(req: Request, res: Response, next: NextFunction) {
+    public async validatePostMovieRequestAndSendResponse(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
         const { movie, poster } = req.files;
 
         expect(movie.type, '400:Invalid filetype').to.match(/video/);
         expect(poster.type, '400:Invalid filetype').to.match(/image/);
 
-        res.status(200).json({
+        res.status(202).json({
             data: { message: 'Upload success' },
         });
 

@@ -112,13 +112,17 @@ class MovieController {
 
     @asyncHander
     @mustExist('files.movie', 'files.poster', 'body.title')
-    public async validatePostMovieRequest(req: Request, res: Response, next: NextFunction) {
+    public async validatePostMovieRequestAndSendResponse(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
         const { movie, poster } = req.files;
 
         expect(movie.type, '400:Invalid filetype').to.match(/video/);
         expect(poster.type, '400:Invalid filetype').to.match(/image/);
 
-        res.status(200).json({
+        res.status(202).json({
             data: { message: 'Upload success' },
         });
 

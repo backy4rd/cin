@@ -2,20 +2,19 @@ import * as http from 'http';
 
 import env from './providers/env';
 import app from './providers/express';
-import socket from './providers/socket';
 
-let server: http.Server;
+class Server {
+    public server: http.Server;
 
-export function init() {
-    server = http.createServer(app);
-    socket.init(server);
+    public init() {
+        this.server = http.createServer(app);
+    }
+
+    public listen() {
+        this.server.listen(env.PORT, () => {
+            console.log('server listening on port ' + env.PORT);
+        });
+    }
 }
 
-export function listen() {
-    socket.listen();
-    server.listen(env.PORT, () => {
-        console.log('server listening on port ' + env.PORT);
-    });
-}
-
-export default server;
+export default new Server();

@@ -2,7 +2,6 @@ import * as crypto from 'crypto';
 import { promises as fsp } from 'fs';
 import * as path from 'path';
 import * as sharp from 'sharp';
-import getVideoDuration from 'get-video-duration';
 import { expect } from 'chai';
 import { Request, Response, NextFunction } from 'express';
 
@@ -11,6 +10,7 @@ import Movie from '../models/Movie';
 import asyncHander from '../decorators/async_handler';
 import { mustExist } from '../decorators/validate_decorators';
 import processVideoInOrder from '../utils/process_video';
+import getVideoDuration from '../utils/get_video_duration';
 
 const staticDir = path.resolve(__dirname, '../../data');
 

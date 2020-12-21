@@ -6,6 +6,7 @@ import { expect } from 'chai';
 import { Request, Response, NextFunction } from 'express';
 
 import Movie from '../models/Movie';
+import Showtime from '../models/Showtime';
 
 import asyncHander from '../decorators/async_handler';
 import { mustExist } from '../decorators/validate_decorators';
@@ -24,6 +25,20 @@ class MovieController {
 
         res.status(200).json({
             data: movie,
+        });
+    }
+
+    @asyncHander
+    public async getShowtimesByMovieId(req: Request, res: Response) {
+        const movie_id = parseInt(req.params.movie_id);
+
+        const movie = await Movie.getMovieById(movie_id);
+        expect(movie, "404:movie_id doesn't exist").to.exist;
+
+        const showtimes = await Showtime.getShowtimesByMovieId(movie_id);
+
+        res.status(200).json({
+            data: showtimes,
         });
     }
 

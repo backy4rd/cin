@@ -12,6 +12,7 @@ router.use(express.json());
 
 // User permission
 router.get('/:movie_id(\\d+)', movieController.getMovieById);
+router.get('/:movie_id(\\d+)/showtimes', movieController.getShowtimesByMovieId);
 router.get('/showing', movieController.getShowingMovies);
 router.get('/upcomming', movieController.getUpcommingMovies);
 

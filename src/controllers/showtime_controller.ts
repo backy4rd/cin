@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { expect } from 'chai';
 
 import Showtime from '../models/Showtime';
-import Movie from '../models/Movie';
 
 import {
     isDateFormat,
@@ -15,13 +14,23 @@ import asyncHander from '../decorators/async_handler';
 
 class ShowtimeController {
     @asyncHander
-    public async getShowtimesByMovieId(req: Request, res: Response) {
-        const movie_id = parseInt(req.params.movie_id);
+    public async getShowtimesById(req: Request, res: Response) {
+        const showtime_id = parseInt(req.params.showtime_id);
 
-        const movie = await Movie.getMovieById(movie_id);
-        expect(movie, "404:movie_id doesn't exist").to.exist;
+        const showtime = await Showtime.getShowtimeById(showtime_id);
+        expect(showtime, "404:showtime_id doesn't exist").to.exist;
 
-        const showtimes = await Showtime.getShowtimesByMovieId(movie_id);
+        res.status(200).json({
+            data: showtime,
+        });
+    }
+
+    @mustExist('query.movie_id')
+    public async getPlayingShowtimeByMovieId(req: Request, res: Response) {
+        const movie_id: number = parseInt(req.query.movie_id as string);
+        expect(movie_id, '400:Invalid Parameters').to.not.be.NaN;
+
+        const showtimes = await Showtime.getPlayingShowtimesByMovieId(movie_id);
 
         res.status(200).json({
             data: showtimes,

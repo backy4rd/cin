@@ -3,6 +3,7 @@ import knex from '../providers/database';
 import ModelError from '../utils/model_error';
 
 import { IShowtime, IQueryShowtime, IQueryShowtimeDetail } from '../interfaces/showtime';
+import { Range } from '../interfaces/general';
 
 export const tableName = 'showtimes';
 
@@ -57,6 +58,30 @@ class Showtime {
                 .where('showtime_id', showtime_id);
 
             return showtimes.length === 0 ? null : showtimes[0];
+            //
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    public async getPlayingShowtimesByMovieId(
+        movie_id: number,
+        range: Range = { offset: 0, limit: 30 },
+    ): Promise<IQueryShowtime[]> {
+        try {
+            return await knex(tableName)
+                .select('showtimes.*')
+                .join('movies', 'movies.movie_id', 'showtimes.movie_id')
+                .where('showtimes.movie_id', '=', movie_id)
+                .andWhere(
+                    knex.raw('DATE_ADD(start_time, INTERVAL duration SECOND)'),
+                    '>',
+                    knex.fn.now(),
+                )
+                .andWhere('start_time', '<=', knex.fn.now())
+                .offset(range.offset)
+                .limit(range.limit);
+
             //
         } catch (err) {
             throw err;

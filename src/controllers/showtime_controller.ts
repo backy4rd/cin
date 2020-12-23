@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { expect } from 'chai';
 
 import Showtime from '../models/Showtime';
+import Movie from '../models/Movie';
 
 import {
     isDateFormat,
@@ -29,6 +30,9 @@ class ShowtimeController {
     public async getPlayingShowtimeByMovieId(req: Request, res: Response) {
         const movie_id: number = parseInt(req.query.movie_id as string);
         expect(movie_id, '400:Invalid Parameters').to.not.be.NaN;
+
+        const movie = await Movie.getMovieById(movie_id);
+        expect(movie, "404:movie_id doesn't exist").to.exist;
 
         const showtimes = await Showtime.getPlayingShowtimesByMovieId(movie_id);
 

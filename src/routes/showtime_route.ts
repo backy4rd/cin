@@ -10,7 +10,8 @@ const router = express.Router();
 router.use(express.json());
 
 // User permission
-router.get('/:movie_id(\\d+)', showtimeController.getShowtimesByMovieId);
+router.get('/:showtime_id(\\d+)', showtimeController.getShowtimesById);
+router.get('/playing', showtimeController.getPlayingShowtimeByMovieId);
 
 // Manager permission
 router.post(

@@ -16,6 +16,7 @@
         "fluent-ffmpeg": "^2.1.2",
         "formidable": "^1.2.2",
         "get-video-duration": "^3.0.2",
+        "helmet": "^4.2.0",
         "jimp": "^0.16.1",
         "jsonwebtoken": "^8.5.1",
         "knex": "^0.21.5",

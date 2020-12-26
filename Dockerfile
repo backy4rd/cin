@@ -1,5 +1,5 @@
 FROM node:12-alpine
-WORKDIR /app
+WORKDIR /api
 RUN apk add ffmpeg
 COPY package*.json ./
 RUN npm install

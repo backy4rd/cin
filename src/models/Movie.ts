@@ -12,12 +12,12 @@ import { Range } from '../interfaces/general';
 
 export const tableName = 'movies';
 
-const vietnameseRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]+$/;
-const pathRegex = /^[\w\/\.]+$/;
+const containSpecialCharacterRegex = /[!@#$%^&*_+\-=\[\]{};"\\|,.<>\/?]/;
+const pathRegex = /^[\w\/\.-]+$/;
 
 class Movie {
     public validateMovie(movie: IMovie): void {
-        if (movie.title && !vietnameseRegex.test(movie.title)) {
+        if (movie.title && containSpecialCharacterRegex.test(movie.title)) {
             throw new ModelError('invalid title');
         }
         if (movie.hls_path && !pathRegex.test(movie.hls_path)) {

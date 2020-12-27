@@ -26,6 +26,7 @@ class ShowtimeController {
         });
     }
 
+    @asyncHander
     @mustExist('query.movie_id')
     public async getPlayingShowtimeByMovieId(req: Request, res: Response) {
         const movie_id: number = parseInt(req.query.movie_id as string);

@@ -137,6 +137,8 @@ class MovieController {
         expect(movie.type, '400:Invalid filetype').to.match(/video/);
         expect(poster.type, '400:Invalid filetype').to.match(/image/);
 
+        Movie.validateMovie({ title: req.body.title });
+
         res.status(202).json({
             data: { message: 'Upload success' },
         });

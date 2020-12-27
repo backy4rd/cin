@@ -1,4 +1,3 @@
-import * as crypto from 'crypto';
 import { promises as fsp } from 'fs';
 import * as path from 'path';
 import * as sharp from 'sharp';
@@ -12,6 +11,7 @@ import asyncHander from '../decorators/async_handler';
 import { mustExist } from '../decorators/validate_decorators';
 import processVideoInOrder from '../utils/process_video';
 import getVideoDuration from '../utils/get_video_duration';
+import makeMovieName from '../utils/make_movie_name';
 
 const staticDir = path.resolve(__dirname, '../../data');
 
@@ -148,7 +148,7 @@ class MovieController {
     public async makeHlsFiles(req: Request, res: Response, next: NextFunction) {
         const { movie, poster } = req.files;
 
-        const outDirName = crypto.randomBytes(8).toString('hex');
+        const outDirName = makeMovieName(req.body.title);
         const outDirPath = path.resolve(staticDir, outDirName);
 
         await fsp.mkdir(outDirPath);
